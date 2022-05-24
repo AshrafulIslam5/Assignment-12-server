@@ -53,6 +53,29 @@ async function run() {
             res.send({ result, token });
         });
 
+        app.get('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            res.send(user)
+        });
+        
+        app.put('/user', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    name: user.name,
+                    location: user.location,
+                    pfp: user.pfp,
+                    number: user.number
+                }
+            }
+            const updatedUser = await userCollection.updateOne(filter, updatedDoc, options);
+            res.send(updatedUser)
+        })
+
         app.get('/tools/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
