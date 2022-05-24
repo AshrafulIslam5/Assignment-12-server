@@ -1,0 +1,56 @@
+[
+    {
+        "name": "Hammer",
+        "img": "https://pngimg.com/uploads/hammer/hammer_PNG3890.png",
+        "description": "Hammer is very much needed for attaching stuff",
+        "min_order_quan": 500,
+        "quantity": 20000,
+        "Perprice": "$5",
+        "price": 5
+    },
+    {
+        "name": "Nails",
+        "img": "https://pngimg.com/uploads/metal_nail/metal_nail_PNG16987.png",
+        "description": "Nails are needed for your wood works and connecting furniture!",
+        "min_order_quan": 1000,
+        "quantity": 20000,
+        "Perprice": "$2 per kg",
+        "price": 0.2
+    },
+    {
+        "name": "Screws",
+        "img": "https://pngimg.com/uploads/screw/screw_PNG3000.png",
+        "description": "With screws, you can attach electronics nicely!",
+        "min_order_quan": 1000,
+        "quantity": 40000,
+        "Perprice": "$2 per kg",
+        "price": 0.2
+    },
+    {
+        "name": "Screwdriver",
+        "img": "https://cdn11.bigcommerce.com/s-ho8qbs43oe/images/stencil/532x532/products/659/6388/screwdriver__25434.1632438694.png?c=2",
+        "description": "For your screws, you need someone reliable for them",
+        "min_order_quan": 800,
+        "quantity": 20000,
+        "Perprice": "$5",
+        "price": 5
+    },
+    {
+        "name": "axe",
+        "img": "https://freepngimg.com/thumb/axe/4-2-axe-png.png",
+        "description": "Axe are very helpful for rural people",
+        "min_order_quan": 500,
+        "quantity": 20000,
+        "Perprice": "$4",
+        "price": 4
+    },
+    {
+        "name": "Scissors",
+        "img": "https://images2.imgbox.com/e0/b8/BODuBrHc_o.png",
+        "description": "Almost every house needs sicssors now a days",
+        "min_order_quan": 500,
+        "quantity": 20000,
+        "Perprice": "$5",
+        "price": 5
+    }
+]

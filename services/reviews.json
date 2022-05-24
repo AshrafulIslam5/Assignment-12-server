@@ -1,0 +1,44 @@
+[
+    {
+        "name": "JBL",
+        "Location": "New jersy, USA",
+        "img" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMnW0NxLHvZMGRrPZ0KehQYu1XkSLQCnZ9xtW6ewFacHB9-9WUegD9t06OZs-HinLwjHw&usqp=CAU",
+        "givenReview": "I have bought many products for my sales, all products are top class, I am greatful to this company",
+        "rating": 4.5
+    },
+    {
+        "name": "Adnan Ali",
+        "Location": "Dhaka, Bangladesh",
+        "img" : "https://img.freepik.com/free-photo/young-handsome-indian-boy-wearing-black-t-shirt_75648-1497.jpg",
+        "givenReview": "I have been buying my shop products from here for a long time, This company really is good for these around here!",
+        "rating": 5
+    },
+    {
+        "name": "Farhan Afi",
+        "Location": "Dhaka, Bangladesh",
+        "img" : "https://cdn.sharechat.com/modelboy_3012f41a_1586006666382_cmprsd_40.jpg",
+        "givenReview": "I have been buying my shop products from here for a long time, This company really is good for these around here! hehe",
+        "rating": 4
+    },
+    {
+        "name": "Ashfak Ali",
+        "Location": "Dhaka, Bangladesh",
+        "img" : "http://www.goodmorningimagesdownload.com/wp-content/uploads/2021/11/HD-New-Smart-Boy-Dp-for-Whatsapp-Pics-Images-Download.jpg",
+        "givenReview": "I have been buying my shop products from here for a long time, This company really is good for these around here! hehe",
+        "rating": 2.5
+    },
+    {
+        "name": "Morshed Islam Fahim",
+        "Location": "Dhaka, Bangladesh",
+        "img" : "https://m.media-amazon.com/images/M/MV5BM2NlZjlkMTgtODZjYS00ODhlLTkyOGUtM2MyYWJlZTdhMWM3XkEyXkFqcGdeQXVyMTMyMjI2NjA0._V1_.jpg",
+        "givenReview": "I have been buying my shop products from here for a long time, This company really is good for these around here! hehe",
+        "rating": 3.5
+    },
+    {
+        "name": "Ruponti Khatun",
+        "Location": "Islamabad, Pakistan",
+        "img" : "https://media-s3-us-east-1.ceros.com/forbes/images/2021/12/06/bbff530cddcb7ed1b79ecee931f9f854/artboard-2-copy-6.jpg",
+        "givenReview": "Our business started with House Helpers products and are still going with their manufactured products",
+        "rating": 4
+    }
+]

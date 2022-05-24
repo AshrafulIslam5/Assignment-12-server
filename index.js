@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // const jwt = require('jsonwebtoken');
 const app = express();
 const port = process.env.PORT || 5000;
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
@@ -23,14 +24,48 @@ async function run() {
     try {
         await client.connect()
 
-        const toolsCollection = client.db('Helpers').collection('tools')
-        
+        const toolsCollection = client.db('Helpers').collection('tools');
+        const userCollection = client.db('Helpers').collection('users');
+        const reviewCollection = client.db('Helpers').collection('reviews');
+        const purchaseCollection = client.db('Helpers').collection('purchase');
+
 
         app.get('/tools', async (req, res) => {
             const tools = await toolsCollection.find().toArray()
             res.send(tools)
+        });
+
+        app.get('/reviews', async (req, res) => {
+            const reviews = await reviewCollection.find().toArray();
+            res.send(reviews)
         })
-        
+
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email, role: 'user' };
+            const user = req.body;
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: user
+            };
+            const result = await userCollection.updateOne(query, updatedDoc, options);
+            const token = jwt.sign({ email: email }, process.env.JSONWEBTOKEN, { expiresIn: '2d' })
+            res.send({ result, token });
+        });
+
+        app.get('/tools/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const tool = await toolsCollection.findOne(query);
+            res.send(tool)
+        });
+
+        app.post('/purchase', async (req, res) => {
+            const purchase = req.body;
+            const result = await purchaseCollection.insertOne(purchase);
+            res.send(result)
+        })
+
     }
     finally {
         // await client.close();
