@@ -38,6 +38,12 @@ async function run() {
         app.get('/reviews', async (req, res) => {
             const reviews = await reviewCollection.find().toArray();
             res.send(reviews)
+        });
+
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const addedReview = await reviewCollection.insertOne(review);
+            res.send(addedReview)
         })
 
         app.put('/user/:email', async (req, res) => {
@@ -49,7 +55,7 @@ async function run() {
                 $set: user
             };
             const result = await userCollection.updateOne(query, updatedDoc, options);
-            const token = jwt.sign({ email: email }, process.env.JSONWEBTOKEN, { expiresIn: '2d' })
+            const token = jwt.sign({ email: email }, process.env.JSONWEBTOKEN)
             res.send({ result, token });
         });
 
@@ -59,7 +65,7 @@ async function run() {
             const user = await userCollection.findOne(query);
             res.send(user)
         });
-        
+
         app.put('/user', async (req, res) => {
             const user = req.body;
             const filter = { email: user.email };
