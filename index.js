@@ -122,8 +122,8 @@ async function run() {
             res.send(result)
         });
 
-        app.get('/purchase/:email', verifyJWT, async (req, res) => {
-            const email = req?.params?.email;
+        app.get('/purchase', verifyJWT, async (req, res) => {
+            const email = req?.query.email;
             const decodedEmail = req?.decoded?.email;
             if (email === decodedEmail) {
                 const filter = { PurchaserEmail: email };
@@ -134,7 +134,14 @@ async function run() {
             }
         });
 
-        app.delete('/purchase/:id', verifyJWT, async (req, res) => {
+        app.get('/purchase/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const order = await purchaseCollection.findOne(filter);
+            res.send(order);
+        })
+
+        app.delete('/purchase/:id', verifyJWT,  async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await purchaseCollection.deleteOne(filter);
