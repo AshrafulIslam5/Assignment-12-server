@@ -18,7 +18,20 @@ const uri = `mongodb+srv://${process.env.db_User}:${process.env.db_Pass}@assignm
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'UnAuthorized access' })
+    }
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JSONWEBTOKEN, function (err, decoded) {
+        if (err) {
+            res.status(403).send({ message: 'forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
 
 async function run() {
     try {
@@ -52,7 +65,9 @@ async function run() {
             };
             const result = await toolsCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
-        })
+        });
+
+
 
         app.get('/reviews', async (req, res) => {
             const reviews = await reviewCollection.find().toArray();
@@ -107,7 +122,24 @@ async function run() {
             res.send(result)
         });
 
-        app.get('/purchase/:email', )
+        app.get('/purchase/:email', verifyJWT, async (req, res) => {
+            const email = req?.params?.email;
+            const decodedEmail = req?.decoded?.email;
+            if (email === decodedEmail) {
+                const filter = { PurchaserEmail: email };
+                const purchases = await purchaseCollection.find(filter).toArray();
+                return res.send(purchases)
+            } else {
+                res.status(403).send({ message: 'forbidden access' })
+            }
+        });
+
+        app.delete('/purchase/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await purchaseCollection.deleteOne(filter);
+            res.send(result)
+        })
 
     }
     finally {
