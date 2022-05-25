@@ -35,6 +35,25 @@ async function run() {
             res.send(tools)
         });
 
+        app.get('/tools/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const tool = await toolsCollection.findOne(query);
+            res.send(tool)
+        });
+
+        app.put('/tools/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const newQuantity = req.body;
+            const updatedDoc = {
+                $set: { quantity: newQuantity.FinalQuantity }
+            };
+            const result = await toolsCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+        })
+
         app.get('/reviews', async (req, res) => {
             const reviews = await reviewCollection.find().toArray();
             res.send(reviews)
@@ -82,18 +101,13 @@ async function run() {
             res.send(updatedUser)
         })
 
-        app.get('/tools/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const tool = await toolsCollection.findOne(query);
-            res.send(tool)
-        });
-
         app.post('/purchase', async (req, res) => {
             const purchase = req.body;
             const result = await purchaseCollection.insertOne(purchase);
             res.send(result)
-        })
+        });
+
+        app.get('/purchase/:email', )
 
     }
     finally {
