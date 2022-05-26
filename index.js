@@ -44,6 +44,19 @@ async function run() {
         const purchaseCollection = client.db('Helpers').collection('purchase');
         const transictionIdCollection = client.db('Helpers').collection('transictionIds');
 
+        const verifyAdmin = async (req, res, next) => {
+            const initiater = req.decoded.email;
+            const requesterAccount = await userCollection.findOne({ email: initiater });
+            if (requesterAccount.admin === true) {
+                next()
+            } else if (!requesterAccount.admin) {
+
+            }
+            else {
+                res.status(403).send({ message: 'Forbidden Access' })
+            }
+        }
+
 
         app.get('/tools', async (req, res) => {
             const tools = await toolsCollection.find().toArray()
@@ -69,7 +82,19 @@ async function run() {
             res.send(result)
         });
 
+        app.post('/tools', verifyJWT, verifyAdmin, async (req, res) => {
+            const product = req.body;
+            console.log(product);
+            const addedProduct = await toolsCollection.insertOne(product);
+            res.send(addedProduct);
+        })
 
+        app.delete('/tools/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await toolsCollection.deleteOne(filter);
+            res.send(result);
+        });
 
         app.get('/reviews', async (req, res) => {
             const reviews = await reviewCollection.find().toArray();
@@ -80,11 +105,27 @@ async function run() {
             const review = req.body;
             const addedReview = await reviewCollection.insertOne(review);
             res.send(addedReview)
+        });
+
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.admin === true;
+            res.send({ admin: isAdmin })
         })
 
+        app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const updatedDoc = {
+                $set: { admin: true }
+            };
+            const result = await userCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        });
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
-            const query = { email: email, role: 'user' };
+            const query = { email: email };
             const user = req.body;
             const options = { upsert: true };
             const updatedDoc = {
@@ -102,6 +143,12 @@ async function run() {
             res.send(user)
         });
 
+
+        app.get('/user', verifyJWT, verifyAdmin, async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users)
+        })
+
         app.put('/user', async (req, res) => {
             const user = req.body;
             const filter = { email: user.email };
@@ -116,7 +163,15 @@ async function run() {
             }
             const updatedUser = await userCollection.updateOne(filter, updatedDoc, options);
             res.send(updatedUser)
+        });
+
+        app.delete('/user/:email', verifyJWT, verifyAdmin, async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const result = await userCollection.deleteOne(filter);
+            res.send(result);
         })
+
 
         app.post('/purchase', async (req, res) => {
             const purchase = req.body;
@@ -124,8 +179,10 @@ async function run() {
             res.send(result)
         });
 
+        
+
         app.get('/purchase', verifyJWT, async (req, res) => {
-            const email = req?.query.email;
+            const email = req?.query?.email;
             const decodedEmail = req?.decoded?.email;
             if (email === decodedEmail) {
                 const filter = { PurchaserEmail: email };
@@ -136,12 +193,8 @@ async function run() {
             }
         });
 
-        app.get('/purchase/:id', verifyJWT, async (req, res) => {
-            const id = req.params.id;
-            const filter = { _id: ObjectId(id) };
-            const order = await purchaseCollection.findOne(filter);
-            res.send(order);
-        });
+        
+
         app.get('/purchase/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
@@ -152,7 +205,6 @@ async function run() {
         app.put('/purchase/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const transactionId = req.body.transactionId;
-            console.log(req.body)
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true }
             const updatedDoc = {
@@ -175,14 +227,33 @@ async function run() {
                 payment_method_types: ['card']
             });
             res.send({ clientSecret: paymentIntent.client_secret })
-        })
-        
+        });
+
         app.delete('/purchase/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await purchaseCollection.deleteOne(filter);
             res.send(result)
         });
+
+        app.get('/allPurchases', verifyJWT, verifyAdmin, async (req, res) => {
+            const orders = await purchaseCollection.find().toArray();
+            res.send(orders);
+        });
+
+        app.patch('/allPurchases/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    Status: 'shipped'
+                }
+            }
+            const result = await purchaseCollection.updateOne(filter, updatedDoc);
+            res.send(result);
+        })
+
+
     }
     finally {
         // await client.close();
