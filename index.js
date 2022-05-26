@@ -6,6 +6,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const stripe = require('stripe')(process.env.StripeKey)
 
 
 // middletier
@@ -41,6 +42,7 @@ async function run() {
         const userCollection = client.db('Helpers').collection('users');
         const reviewCollection = client.db('Helpers').collection('reviews');
         const purchaseCollection = client.db('Helpers').collection('purchase');
+        const transictionIdCollection = client.db('Helpers').collection('transictionIds');
 
 
         app.get('/tools', async (req, res) => {
@@ -139,15 +141,48 @@ async function run() {
             const filter = { _id: ObjectId(id) };
             const order = await purchaseCollection.findOne(filter);
             res.send(order);
+        });
+        app.get('/purchase/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const order = await purchaseCollection.findOne(filter);
+            res.send(order);
+        });
+
+        app.put('/purchase/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const transactionId = req.body.transactionId;
+            console.log(req.body)
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+                    paidStatus: true,
+                    Status: 'pending',
+                    transactionId: transactionId
+                }
+            }
+            const PaidOrder = await purchaseCollection.updateOne(filter, updatedDoc, options);
+            res.send(PaidOrder);
         })
 
-        app.delete('/purchase/:id', verifyJWT,  async (req, res) => {
+        app.post('/createPaymentIntent', verifyJWT, async (req, res) => {
+            const { price } = req.body;
+            const payableMoney = price * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: payableMoney,
+                currency: 'usd',
+                payment_method_types: ['card']
+            });
+            res.send({ clientSecret: paymentIntent.client_secret })
+        })
+        
+        app.delete('/purchase/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await purchaseCollection.deleteOne(filter);
             res.send(result)
-        })
-
+        });
     }
     finally {
         // await client.close();
