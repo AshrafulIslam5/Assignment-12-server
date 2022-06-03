@@ -20,6 +20,3 @@
 * then I created jwt confirmation
 * and hosted it on `Heroku!`
 
-
-
-- Deployed To Heroku -> https://ashrafuls-assignment-11.herokuapp.com
